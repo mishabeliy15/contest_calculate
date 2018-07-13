@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClick_parse(View v) {
         final String[] urls_osvita = {"https://vstup.osvita.ua/r21/92/460953/","https://vstup.osvita.ua/r21/92/461081/"},
-             urls_abit = {"https://abit-poisk.org.ua/rate2017/direction/46784/?page=","https://abit-poisk.org.ua/rate2017/direction/46789"};
+             urls_abit = {"https://abit-poisk.org.ua/rate2017/direction/46784/?page=","https://abit-poisk.org.ua/rate2017/direction/46789/?page="};
         RadioButton radio_pi = findViewById(R.id.radioButton_pi);
         int i=radio_pi.isChecked()?0:1;
         Parsing(urls_osvita[i]);
