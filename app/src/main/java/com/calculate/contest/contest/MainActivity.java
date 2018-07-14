@@ -98,15 +98,19 @@ public class MainActivity extends AppCompatActivity {
                 Elements bud = doc.select("div[class=table-of-specs-item panel-mobile] > b");
                 if (budgets == null) budgets = bud.eq(13).text();
                 double my_score = Double.parseDouble(ed_score.getText().toString());
-                int prior1 = 0, prior2 = 0, prior3 = 0, p_errors = 0, counts_before_me = 0;
+                int prior1 = 0, prior2 = 0, prior3 = 0, prior_c = 0, counts_before_me = 0;
                 for (Element abit : abits) {
                     String temp;
                     try {
                         temp = abit.select("td[data-th=П]").first().text();
                         int prior = !temp.contains("—")?Integer.parseInt(temp):0;
                         double score = Double.parseDouble(abit.select("td[data-th=Бал]").first().text());
-                        if (my_score < score)
+                        if (my_score < score) {
+                            counts_before_me++;
                             switch (prior) {
+                                case 0:
+                                    prior_c++;
+                                    break;
                                 case 1:
                                     prior1++;
                                     break;
@@ -117,12 +121,11 @@ public class MainActivity extends AppCompatActivity {
                                     prior3++;
                                     break;
                             }
-                        if(!temp.contains("—"))counts_before_me++;
+                        }
                     } catch (Exception e) {
-                        p_errors++;
                     }
                 }
-                final int f_pr1 = prior1, f_pr2 = prior2, f_pr3 = prior3, f_err = p_errors, all_z = abits.size(), f_before_me = counts_before_me;
+                final int f_pr1 = prior1, f_pr2 = prior2, f_pr3 = prior3, f_c = prior_c, all_z = abits.size(), f_before_me = counts_before_me;
                 final String temp_upd = last_upd, f_budgets = budgets;
                 runOnUiThread(new Runnable() {
                     @Override
@@ -132,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
                         prior1_view.setText(String.valueOf(f_pr1));
                         prior2_view.setText(String.valueOf(f_pr2));
                         prior3_view.setText(String.valueOf(f_pr3));
-                        prior_err_view.setText(String.valueOf(f_err));
-                        if (f_err > 0) prior_err_view.setTextColor(Color.RED);
+                        prior_err_view.setText(String.valueOf(f_c));
                         TextView last_upd_v = findViewById(R.id.textView_last_upd);
                         last_upd_v.setText(temp_upd);
                         last_upd_v.setVisibility(View.VISIBLE);
