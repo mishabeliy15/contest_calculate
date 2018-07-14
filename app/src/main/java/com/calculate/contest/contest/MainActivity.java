@@ -2,16 +2,13 @@ package com.calculate.contest.contest;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.icu.util.RangeValueIterator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.SparseIntArray;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +16,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+
+import static java.lang.Thread.sleep;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick_parse(View v) {
-        final String[] urls_osvita = {"https://vstup.osvita.ua/r21/92/460953/","https://vstup.osvita.ua/r21/92/461081/"},
-             urls_abit = {"https://abit-poisk.org.ua/rate2017/direction/46784/?page=","https://abit-poisk.org.ua/rate2017/direction/46789/?page="};
+        final String[] urls_osvita = {"https://vstup.osvita.ua/r21/92/460953/", "https://vstup.osvita.ua/r21/92/461081/"},
+                urls_abit = {"https://abit-poisk.org.ua/rate2017/direction/46784/?page=", "https://abit-poisk.org.ua/rate2017/direction/46789/?page="};
         RadioButton radio_pi = findViewById(R.id.radioButton_pi);
-        int i=radio_pi.isChecked()?0:1;
+        int i = radio_pi.isChecked() ? 0 : 1;
         Parsing(urls_osvita[i]);
         CheckBox checkbox = findViewById(R.id.checkBox);
-        if(checkbox.isChecked())preview_year(urls_abit[i]);
+        if (checkbox.isChecked()) preview_year(urls_abit[i]);
     }
 
     void saveData() {
@@ -83,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         doc = Jsoup.connect(url).get();
                         abits = doc.select("table.rwd-table > tbody > tr[class*=rstatus]:not(.hdn)");
-                        if(last_upd==null)last_upd=doc.selectFirst("div.last-update").text();
-                        if(budgets==null) budgets = doc.select("div[class=table-of-specs-item panel-mobile] > b").next().next().next().first().text();
-
                     } catch (IOException e) {
                         errors++;
                         final int temp_err = errors;
@@ -98,25 +94,30 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 } while (doc == null);
+                if (last_upd == null) last_upd = doc.selectFirst("div.last-update").text();
+                Elements bud = doc.select("div[class=table-of-specs-item panel-mobile] > b");
+                if (budgets == null) budgets = bud.eq(13).text();
                 double my_score = Double.parseDouble(ed_score.getText().toString());
                 int prior1 = 0, prior2 = 0, prior3 = 0, p_errors = 0, counts_before_me = 0;
                 for (Element abit : abits) {
+                    String temp;
                     try {
-                        int prior = Integer.parseInt(abit.select("td[data-th=П]").first().text());
+                        temp = abit.select("td[data-th=П]").first().text();
+                        int prior = !temp.contains("—")?Integer.parseInt(temp):0;
                         double score = Double.parseDouble(abit.select("td[data-th=Бал]").first().text());
-                        if (my_score >= score) break;
-                        switch (prior) {
-                            case 1:
-                                prior1++;
-                                break;
-                            case 2:
-                                prior2++;
-                                break;
-                            case 3:
-                                prior3++;
-                                break;
-                        }
-                        counts_before_me++;
+                        if (my_score < score)
+                            switch (prior) {
+                                case 1:
+                                    prior1++;
+                                    break;
+                                case 2:
+                                    prior2++;
+                                    break;
+                                case 3:
+                                    prior3++;
+                                    break;
+                            }
+                        if(!temp.contains("—"))counts_before_me++;
                     } catch (Exception e) {
                         p_errors++;
                     }
@@ -156,26 +157,27 @@ public class MainActivity extends AppCompatActivity {
                     for (int page = 1; f; page++) {
                         doc = get_document((url + String.valueOf(page)));
                         abits = doc.select("tr.statement-zar");
+                        if (abits == null || abits.size() == 0) {
+                            f = false;
+                            break;
+                        }
                         for (Element abit : abits) {
-                            if (abit.html().contains("контракт")) {
-                                f = false;
-                                break;
-                            }
+                            f = !(abit.html().contains("контракт"));
                             Element temp = abit.getElementsByTag("td").next().next().first();
-                            if("0123456789".contains(temp.text())) {
+                            if ("0123456789".contains(temp.text())) {
                                 int prior = Integer.parseInt(temp.text());
                                 priors[prior]++;
                             }
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                 }
                 final int[] f_priors = priors;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        StringBuilder s=new StringBuilder();
-                        for(int i=1;i<10;i++) s.append("П"+i+": "+f_priors[i]+" ");
+                        StringBuilder s = new StringBuilder();
+                        for (int i = 1; i < 10; i++) s.append("П" + i + ": " + f_priors[i] + " ");
                         TextView pr_y = findViewById(R.id.textView_prev_year);
                         pr_y.setText(s.toString());
                     }
@@ -184,12 +186,13 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    public Document get_document(String url) {
+    public Document get_document(String url) throws InterruptedException {
         Document doc = null;
         do
             try {
                 doc = Jsoup.connect(url).get();
             } catch (IOException e) {
+                sleep(1000);
             }
         while (doc == null);
         return doc;
