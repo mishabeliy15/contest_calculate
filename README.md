@@ -6,6 +6,6 @@ Source data
 * Contest 2017: [Cick](https://abit-poisk.org.ua/rate2017)
  
  
-You can see how it works: [Click](https://youtu.be/rn1F0oi-7vU)
+You can see how it works: [Click](https://youtu.be/3z32idCypVs)
 
 Download APK: [Click](https://drive.google.com/open?id=1XHm7cHdbk32j87hrkVOhIhGVyM97mLvH)
