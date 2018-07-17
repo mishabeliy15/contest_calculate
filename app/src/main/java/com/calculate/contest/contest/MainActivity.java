@@ -17,15 +17,19 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import static java.lang.Thread.sleep;
+import static java.util.Arrays.sort;
 
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences sPref;
-    final String contest_score = "181.458", my_url = "https://vstup.osvita.ua/r21/227/445717/";
+    final String contest_score = "181.458", my_url = "";
     EditText ed_score, ed_myurl;
-    TextView prior1_view, prior2_view, prior3_view, prior_err_view, all_zayav_view, before_me_view, view_err,view_last_year;
+    TextView prior1_view, prior2_view, prior3_view, prior_err_view, all_zayav_view, before_me_view, view_err,view_last_year,textview_last_p1;
     RadioGroup radio_group;
     CheckBox checkbox_last_year;
     final String[] urls_osvita = {"https://vstup.osvita.ua/r21/92/460953/", "https://vstup.osvita.ua/r21/92/461081/",
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         radio_group = findViewById(R.id.radioGroup);
         checkbox_last_year = findViewById(R.id.checkBox);
         view_last_year = findViewById(R.id.textView_prev_year);
+        textview_last_p1 = findViewById(R.id.textView_prohod);
         radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -59,24 +64,28 @@ public class MainActivity extends AppCompatActivity {
                         checkbox_last_year.setVisibility(View.VISIBLE);
                         checkbox_last_year.setChecked(true);
                         view_last_year.setVisibility(View.VISIBLE);
+                        ed_myurl.setVisibility(View.INVISIBLE);
                         break;
                     case R.id.radioButton_kn:
                         url_id = 1;
                         checkbox_last_year.setVisibility(View.VISIBLE);
                         checkbox_last_year.setChecked(true);
                         view_last_year.setVisibility(View.VISIBLE);
+                        ed_myurl.setVisibility(View.INVISIBLE);
                         break;
                     case R.id.radioButton_hneu_pi:
                         url_id = 2;
                         checkbox_last_year.setVisibility(View.VISIBLE);
                         checkbox_last_year.setChecked(true);
                         view_last_year.setVisibility(View.VISIBLE);
+                        ed_myurl.setVisibility(View.INVISIBLE);
                         break;
                     case R.id.radioButton_mylink:
                         url_id = 3;
                         checkbox_last_year.setChecked(false);
                         checkbox_last_year.setVisibility(View.INVISIBLE);
                         view_last_year.setVisibility(View.INVISIBLE);
+                        ed_myurl.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -120,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
                 Elements abits = null;
                 String last_upd = null;
                 String budgets = null;
+                int budg = 0;
+                ArrayList<Double> balls_p1=null;
                 try {
                     doc = get_document(url);
                     abits = doc.select("table.rwd-table > tbody > tr[class*=rstatus]:not(.hdn)");
@@ -131,9 +142,12 @@ public class MainActivity extends AppCompatActivity {
                         for (int i=0;i<2;i++)temp = temp.delete(0,temp.indexOf(" ")+1);
                         temp = temp.delete(temp.indexOf(" "),temp.length());
                         budgets = temp.toString();
+                        budg = Integer.parseInt(budgets);
                     }
                     double my_score = Double.parseDouble(ed_score.getText().toString());
                     int prior1 = 0, prior2 = 0, prior3 = 0, prior_c = 0, counts_before_me = 0;
+                    balls_p1 = new ArrayList();
+                    int i=0;
                     for (Element abit : abits) {
                         String temp;
                         try {
@@ -157,11 +171,17 @@ public class MainActivity extends AppCompatActivity {
                                         break;
                                 }
                             }
+                            if(prior==1){
+                                balls_p1.add(score);
+                                i++;
+                            }
                         } catch (Exception e) {
                         }
                     }
                     final int f_pr1 = prior1, f_pr2 = prior2, f_pr3 = prior3, f_c = prior_c, all_z = abits.size(), f_before_me = counts_before_me;
                     final String temp_upd = last_upd, f_budgets = budgets;
+                    sort(balls_p1.toArray(), Collections.reverseOrder());
+                    final double prohod = balls_p1.get(budg>balls_p1.size()?balls_p1.size():budg-1);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -176,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
                             last_upd_v.setVisibility(View.VISIBLE);
                             TextView view_budget = findViewById(R.id.textView_budget);
                             view_budget.setText(f_budgets);
+                            textview_last_p1.setText(String.valueOf(prohod));
                         }
                     });
                 } catch (Exception e) {

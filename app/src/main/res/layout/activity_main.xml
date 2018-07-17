@@ -97,11 +97,11 @@
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="368dp"
-        android:layout_height="187dp"
+        android:layout_height="196dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:padding="10dp"
+        android:padding="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView_39">
@@ -174,6 +174,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
+                android:textAlignment="viewStart"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </TableRow>
@@ -242,14 +243,38 @@
                 android:textStyle="bold" />
         </TableRow>
 
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="0dp"
+            android:paddingRight="5dp">
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Проходной балл(по 1П)"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView_prohod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </TableRow>
+
     </TableLayout>
 
     <RadioGroup
         android:id="@+id/radioGroup"
         android:layout_width="123dp"
-        android:layout_height="58dp"
+        android:layout_height="90dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:padding="5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2">
 
@@ -320,7 +345,7 @@
         android:id="@+id/textView_budget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="0"
         android:textSize="18sp"
