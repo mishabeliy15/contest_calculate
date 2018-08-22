@@ -7,5 +7,3 @@ Source data
  
  
 You can see how it works: [Click](https://youtu.be/3z32idCypVs)
-
-Download APK: [Click](https://drive.google.com/open?id=1hT0lb_hBzN-AxN7L5SfBvpeHcoHUKLe8)
