@@ -1,5 +1,5 @@
 # Сontest Helper
-This programm can help you monitoring contest in HNURE on Software Enginerieng and Computer Sciense. And it's easy to scale to any specialty and university in Ukraine. You can paste link on contest(vstup.osvita.ua or abit-poisk.org.ua).
+This programm can help you monitoring contest in NURE on Software Enginerieng and Computer Sciense. And it's easy to scale to any specialty and university in Ukraine. You can paste link on contest(vstup.osvita.ua or abit-poisk.org.ua).
 
 Source data
 * Contest 2018: [Cick](https://vstup.osvita.ua/)
